@@ -1,4 +1,4 @@
-AFRAME.registerComponent('follow-hand', {
+AFRAME.registerComponent('follow-camera', {
     tick: function () {
         // Récupère référence à l'entité de la caméra
         var camera = document.getElementById('camera');
@@ -19,64 +19,83 @@ AFRAME.registerComponent('follow-hand', {
     }
 });
 
+let mouseCoords = { x: 0, y: 0 };
+
+
 
 function addTag() {
     var scene = document.querySelector('#scene');
+    var camera = document.getElementById('camera');
+    var cameraDirection = new THREE.Vector3();
+    camera.object3D.getWorldDirection(cameraDirection);
 
-    // nouveau tag
+    
+    var distance = -10; // Distance (peut etre reglé)
+
+    // Calcul la position où le tag doit être créé
+    var tagPosition = new THREE.Vector3();
+    tagPosition.copy(camera.object3D.position).addScaledVector(cameraDirection, distance);
+
+    // Nouveau tag
     var newBox = document.createElement('a-box');
-    newBox.setAttribute('position', '0 1.5 -3');
+    newBox.setAttribute('position', tagPosition);
     newBox.setAttribute('rotation', '0 45 0'); 
     newBox.setAttribute('color', '#4CC3D9');   
+    newBox.setAttribute('class', 'draggable'); 
+        
+    // Ajouter des événements pour le drag and drop
+    newBox.addEventListener('mousedown', function () {
+      this.setAttribute('color', '#FF0000'); // Change la couleur quand il est attrapé
+      this.isDragging = true;
+    });
 
-    
+    newBox.addEventListener('mouseup', function () {
+      this.setAttribute('color', '#4CC3D9'); // Remet la couleur à l'original
+      this.isDragging = false;
+      console.log("mouse up ")
+
+    });
+
+    newBox.addEventListener('mouseleave', function () {
+        this.isDragging = true; 
+        this.setAttribute('color', '#4CC3D9');
+        console.log("mouse leave")
+    });
+
+  
+
     scene.appendChild(newBox);
+
+    
+    // scene.addEventListener('mousemove', function (event) {
+    //     if (newBox.isDragging) {
+    //         const position = new THREE.Vector3();
+    //         const cameraDirection = new THREE.Vector3();
+    //         camera.object3D.getWorldDirection(cameraDirection);
+
+    //         const distance = 4; // Ajuster cette valeur selon tes besoins
+
+    //         position.copy(cameraDirection).multiplyScalar(distance);
+    //         position.x += (mouseCoords.x / window.innerWidth) * 2 - 1; // Ajuster la position x
+    //         position.y += (-mouseCoords.y / window.innerHeight) * 2 + 1; // Ajuster la position y
+
+    //         newBox.setAttribute('position', {
+    //             x: position.x,
+    //             y: position.y,
+    //             z: 4 // Garde z à 4
+    //         });
+    //     }
+
+    // });
   }
 
-// function mettreAJourPositionPoint() {
-//     var pointCentral = document.getElementById('point-central');
-//     var camera = document.querySelector('#camera');
 
-//     var cameraPosition = camera.getAttribute('position');
-    
-
-//     // Mettre à jour la position du point central pour suivre la caméra
-//     pointCentral.setAttribute('position', {
-//       x: cameraPosition.x,
-//       y: cameraPosition.y,
-//       z: cameraPosition.z - 3 // Ajuste la position pour qu'il soit devant la caméra
-//     });
-//   }
-
-// updatePointerPosition = function () {
-//     // Récupère la caméra
-//     var camera = document.getElementById('camera');
-//     // Récupère la position de la caméra
-//     var cameraPosition = camera.getAttribute('position');
-
-//     console.log(cameraPosition);
-    
-
-//     // Défini la distance à la caméra
-//     var distance = 10; 
-
-//     var followerPosition = {
-//         x: cameraPosition.x,
-//         y: cameraPosition.y,
-//         z: cameraPosition.z - distance 
-//     };
-
-//     // Met à jour la position du pointer
-//     var follower = document.getElementById('point-central');
-//     follower.setAttribute('position', followerPosition);
-// }
-
-  // Écouteur d'événements pour le mouvement de la caméra
-  function animate() {
-    updatePointerPosition();
-    requestAnimationFrame(animate);
-  }
-
-  document.querySelector('a-scene').addEventListener('loaded', function () {
-    animate();
+  document.addEventListener('mousemove', (event) => {
+    mouseCoords.x = event.clientX;
+    mouseCoords.y = event.clientY;
+  
+    // Pour afficher les coordonnées dans la console
+    // console.log(`X: ${mouseCoords.x}, Y: ${mouseCoords.y}`);
   });
+
+

@@ -3,6 +3,8 @@
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
+    <script type="module" src="conponent.js"></script>
+    
   </head>
   <body>
     <button onclick="addTag()">Créer Tag</button>
@@ -14,9 +16,10 @@
 
       <a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
 
+      <a-entity simple-draggable></a-entity>
       <!-- <a-camera id="camera"></a-camera> -->
-
-      <a-sphere position="0 1.5 -3" radius="0.1" color="#FF0000" id="point-central" follow-hand></a-sphere>
+      
+      <a-sphere position="0 1.5 -3" radius="0.1" color="#FF0000" id="point-central" follow-camera></a-sphere>
     </a-scene>
   </body>
 </html>
