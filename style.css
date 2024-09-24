@@ -1,8 +1,15 @@
+.control{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  gap: 1rem;
+  top: 10px;
+  left: 10px;
+  z-index: 1; /* Met le bouton au premier plan */
+}
+
 button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1; /* Met le bouton au premier plan */
+    
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.8); /* Arrière-plan blanc légèrement transparent */
     border: none;
